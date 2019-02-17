@@ -46,9 +46,9 @@ namespace Global {
             content = new ContentOrganizer(GraphicsDevice);
             //Prepare what texture and fonts will be loaded
             texturesToLoad = new string[]{
+                "collines1", "collines2", "collines3", "collines4", "collines5", "collines6",
                 "player",
-                "dirt",
-                "collines1"
+                "dirt"
             };
             fontsToLoad = new string[]{
                 "arial"
@@ -67,7 +67,7 @@ namespace Global {
             frameCounter = new FrameCounter();
 
             //Create world
-            world = new World(Window.ClientBounds, 38, 24, rnd);
+            world = new World(Window.ClientBounds, 40, 18, rnd);
 
             int visibleBlocsHorizontaly = world.wdowDimensions.Width / Bloc.SIZE + 1;
             int visibleBlocsVerticaly = world.wdowDimensions.Height / Bloc.SIZE + 1;

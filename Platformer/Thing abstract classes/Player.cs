@@ -11,7 +11,7 @@ namespace Global {
     class Player : Actor {
 
         #region private attributes
-        float _moveSpeed = 150, _jumpForce = -700;
+        float _moveSpeed = 250, _jumpForce = -700;
         Vector2 _directionSpeed;
         #endregion
 

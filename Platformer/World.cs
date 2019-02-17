@@ -105,6 +105,9 @@ namespace Global {
         public void LoadContent(ContentOrganizer content) {
             this.content = content;
 
+            //Load image(s) background
+            background.LoadContent();
+
             //Load content of things
             foreach (var thing in things)
                 thing.LoadContent();
@@ -115,15 +118,14 @@ namespace Global {
         public void Load() {
             displayDebug = true;
 
-            //Load a background
             background = new Background(this);
-
-            //Set the camera to be in the bottom left corner
-            SetCameraPosition(0, height);
 
             //meteo.Add(new Meteo.Rain(this, 500, Color.Red, Color.Blue));
 
             CreateThings();
+
+            //Set the camera to be in the bottom left corner
+            SetCameraPosition(0, height);
         }
         #endregion
 
@@ -153,21 +155,24 @@ namespace Global {
 
         #region draw
         public void Draw(SpriteBatch spriteBatch) {
-            //Draw background
+            //Draw room image behind
             background.Draw(spriteBatch, false);
 
             //Draw all things in worlds
             foreach (var thing in things)
                 thing.Draw(spriteBatch);
 
+            //Draw room image front
+            background.Draw(spriteBatch, true);
+
             //Draw all meteo
             foreach (var meteo in meteo)
                 meteo.Draw(spriteBatch);
 
-            //Draw world border
-            spriteBatch.Draw(content.textures["worldBounds"], pos, DEBUG_COLOR);
-
             if (displayDebug) {
+                //Draw world border
+                spriteBatch.Draw(content.textures["worldBounds"], pos, DEBUG_COLOR);
+
                 //Calculate grid position
                 float dumpX = ((x / Bloc.SIZE) - (float)Math.Floor(x / Bloc.SIZE)) * Bloc.SIZE - Bloc.SIZE;
                 float dumpY = ((y / Bloc.SIZE) - (float)Math.Floor(y / Bloc.SIZE)) * Bloc.SIZE - Bloc.SIZE;
@@ -315,6 +320,8 @@ namespace Global {
             } else {
                 y = -newCameraY + wdowDimensions.Height / 2;
             }
+
+            background.ReplaceLayers();
         }
         #endregion
     }
