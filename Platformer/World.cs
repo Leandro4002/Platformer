@@ -116,7 +116,7 @@ namespace Global {
             displayDebug = true;
 
             //Load a background
-            background = new Background();
+            background = new Background(this);
 
             //Set the camera to be in the bottom left corner
             SetCameraPosition(0, height);
@@ -154,7 +154,7 @@ namespace Global {
         #region draw
         public void Draw(SpriteBatch spriteBatch) {
             //Draw background
-            background.Draw();
+            background.Draw(spriteBatch, false);
 
             //Draw all things in worlds
             foreach (var thing in things)

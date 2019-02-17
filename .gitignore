@@ -1,2 +1,10 @@
 
 \.vs/
+
+Platformer/obj/
+
+Platformer/Content/obj/
+
+Platformer/Content/bin/
+
+Platformer/bin/

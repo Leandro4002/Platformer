@@ -8,21 +8,21 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 namespace Global {
-
-    class Layer {
-        public float x, y, distanceX, distanceY;
-        public Texture2D image;
-        public bool isVisible = true;
-        public bool isOnFront = false;
-
-    }
     class Background {
+        class Layer {
+            public float x, y, distanceX, distanceY;
+            public Texture2D image;
+            public bool isVisible = true;
+            public bool isOnFront = false;
+
+        }
+
         World world;
         List<Layer> layers;
         Color color = Color.White;
         bool isVisible = true;
 
-        Background(World world) {
+        public Background(World world) {
             layers = new List<Layer>();
         }
 
