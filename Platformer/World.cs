@@ -1,11 +1,12 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace Global {
+    [Serializable]
     class World {
         #region private attributes
         float _x, _y, _width, _height;
@@ -77,25 +78,10 @@ namespace Global {
             bordersEvents = new Action<Thing, Vector2>[4];
 
             //Define default world border events
-            void Upper(Thing thing, Vector2 moveForce) {
-                //Do something when a thing cross the upper border
-            }
-            bordersEvents[0] = Upper;
-
-            void Bottom(Thing thing, Vector2 moveForce) {
-                //Do something when a thing cross the bottom border
-            }
-            bordersEvents[1] = Bottom;
-
-            void Left(Thing thing, Vector2 moveForce) {
-                //Do something when a thing cross the left border
-            }
-            bordersEvents[2] = Left;
-
-            void Right(Thing thing, Vector2 moveForce) {
-                //Do something when a thing cross the right border
-            }
-            bordersEvents[3] = Right;
+            bordersEvents[0] = delegate (Thing thing, Vector2 moveForce) { };
+            bordersEvents[1] = delegate (Thing thing, Vector2 moveForce) { };
+            bordersEvents[2] = delegate(Thing thing, Vector2 moveForce) { };
+            bordersEvents[3] = delegate (Thing thing, Vector2 moveForce) { };
 
             Load();
         }
@@ -195,7 +181,7 @@ namespace Global {
                 };
                 int textSpacing = 20;
                 for (int i = 0; i < debugText.Length; i++) {
-                    spriteBatch.DrawString(content.fonts["arial"], debugText[i], new Vector2(2, textSpacing * i), DEBUG_COLOR);
+                    spriteBatch.DrawString(content.fonts["consolas"], debugText[i], new Vector2(2, textSpacing * i), DEBUG_COLOR);
                 }
             }
         }

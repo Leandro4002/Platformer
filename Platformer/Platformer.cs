@@ -13,6 +13,7 @@ namespace Global {
     public class Platformer : Game {
 
         #region private attributes
+        Editor editor;
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         KeyboardState oldKeyboardState;
@@ -51,7 +52,8 @@ namespace Global {
                 "dirt"
             };
             fontsToLoad = new string[]{
-                "arial"
+                "arial",
+                "consolas"
             };
 
             IsMouseVisible = true;
@@ -74,6 +76,8 @@ namespace Global {
 
             world.debugGrid = Tools.GenerateGridTexture2D(GraphicsDevice, visibleBlocsHorizontaly, visibleBlocsVerticaly, Bloc.SIZE, Color.White);
             world.debugRectangleBackground = Tools.GenerateFilledRectangleTexture2D(GraphicsDevice, 200, 130, Color.White);
+
+            editor = new Editor(world, content);
 
             base.Initialize();
         }
@@ -126,6 +130,8 @@ namespace Global {
                 //Increment time
                 time += gameTime.ElapsedGameTime.TotalSeconds;
 
+                editor.Update(Mouse.GetState());
+
                 world.Update(dt, keyboardState);
             }
 
@@ -147,15 +153,17 @@ namespace Global {
 
             //Draw in screen
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp);
-
+            
             world.Draw(spriteBatch);
+
+            editor.Draw(spriteBatch);
 
             //FPS
             frameCounter.Update((float)gameTime.ElapsedGameTime.TotalSeconds);
             string stringFPS = string.Format("FPS:{0}", Math.Round(frameCounter.AverageFramesPerSecond).ToString());
-            Vector2 fpsPosition = new Vector2(Window.ClientBounds.Width - content.fonts["arial"].MeasureString(stringFPS).X, 0);
-            spriteBatch.Draw(content.textures["rect," + (int)content.fonts["arial"].MeasureString(stringFPS).X + "," + (int)content.fonts["arial"].MeasureString(stringFPS).Y],fpsPosition, Color.White);
-            spriteBatch.DrawString(content.fonts["arial"], stringFPS, fpsPosition, Color.Black);
+            Vector2 fpsPosition = new Vector2(Window.ClientBounds.Width - content.fonts["consolas"].MeasureString(stringFPS).X, 0);
+            spriteBatch.Draw(content.textures["rect," + (int)content.fonts["consolas"].MeasureString(stringFPS).X + "," + (int)content.fonts["consolas"].MeasureString(stringFPS).Y],fpsPosition, Color.White);
+            spriteBatch.DrawString(content.fonts["consolas"], stringFPS, fpsPosition, Color.Black);
 
             spriteBatch.End();
 

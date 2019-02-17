@@ -99,7 +99,7 @@ namespace Global {
         public override void Draw(SpriteBatch spriteBatch) {
             spriteBatch.Draw(texture, pos + world.pos, color);
 
-            spriteBatch.DrawString(world.content.fonts["arial"], id.ToString(), new Vector2(world.pos.X + pos.X + 5, world.pos.Y + pos.Y + 38), Color.DarkOrange);
+            spriteBatch.DrawString(world.content.fonts["consolas"], id.ToString(), new Vector2(world.pos.X + pos.X + 5, world.pos.Y + pos.Y + 38), Color.DarkOrange);
         }
 
         public override bool MoveX(float moveSpeed) {

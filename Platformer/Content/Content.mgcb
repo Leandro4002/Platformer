@@ -140,6 +140,13 @@
 /processorParam:TextureFormat=Color
 /build:collines6.png
 
+#begin consolas.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:consolas.spritefont
+
 #begin dirt.png
 /importer:TextureImporter
 /processor:TextureProcessor
