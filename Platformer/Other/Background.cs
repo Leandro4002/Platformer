@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 namespace Global {
+    [Serializable]
     class Background {
         class Layer {
             public float x, y, distanceX, distanceY;

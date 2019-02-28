@@ -52,6 +52,8 @@ namespace Global
                             return textures[index];
                         case "circle":
                             break;
+                        default :
+                            throw new Exception("Unknown texture shape");
                     }
                 }
                 

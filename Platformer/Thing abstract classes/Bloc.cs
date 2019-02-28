@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 namespace Global {
+    [Serializable]
     abstract class Bloc : Thing, IRectangleCollision {
         #region protected attributes
         protected int[] _side;
@@ -32,11 +33,13 @@ namespace Global {
             height = SIZE;
             color = Color.White;
             side = new int[] { 1, 1, 1, 1 };
-            textureString = "rect"+SIZE+","+SIZE+",3";
+            textureString = "rect,"+SIZE+","+SIZE+",3";
         }
         #endregion
 
         #region public methods
+        public Point getCoord => new Point((int)x/SIZE, (int)y/SIZE);
+        
         public void CalculatePosition(Point gridPosition) {
             pos = new Vector2(gridPosition.X * SIZE, gridPosition.Y * SIZE);
         }

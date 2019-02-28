@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
@@ -51,7 +51,7 @@ namespace Global {
         public KeyboardState keyboardState { get { return _keyboardState; } private set { _keyboardState = value; } }
         public KeyboardState oldKeyboardState { get { return _oldKeyboardState; } private set { _oldKeyboardState = value; } }
         public Vector2 wind { get { return _wind; } private set { _wind = value; } }
-        public List<Meteo.Meteo_abstract> meteo{ get { return _meteo; } private set { _meteo = value; } }
+        public List<Meteo.Meteo_abstract> meteo { get { return _meteo; } private set { _meteo = value; } }
 
         public Vector2 pos => new Vector2(x, y);
         #endregion
@@ -80,7 +80,7 @@ namespace Global {
             //Define default world border events
             bordersEvents[0] = delegate (Thing thing, Vector2 moveForce) { };
             bordersEvents[1] = delegate (Thing thing, Vector2 moveForce) { };
-            bordersEvents[2] = delegate(Thing thing, Vector2 moveForce) { };
+            bordersEvents[2] = delegate (Thing thing, Vector2 moveForce) { };
             bordersEvents[3] = delegate (Thing thing, Vector2 moveForce) { };
 
             Load();
@@ -106,7 +106,8 @@ namespace Global {
 
             background = new Background(this);
 
-            //meteo.Add(new Meteo.Rain(this, 500, Color.Red, Color.Blue));
+            //meteo.Add(new Meteo.Rain(this, 100, Color.Blue, Color.LightBlue));
+            //meteo.Add(new Meteo.HeavyWind(this, 100, Color.LightGray, Color.Gray, new Vector2(800, 0), new Vector2(0.05f, 0)));
 
             CreateThings();
 
@@ -124,13 +125,12 @@ namespace Global {
                 thing.Update(dt);
 
             //Update wind if necessary
-            windTimer += 1000*dt;
-            if (windTimer > windRefreshRate && windRefreshRate != 0)
-            {
+            windTimer += 1000 * dt;
+            if (windTimer > windRefreshRate && windRefreshRate != 0) {
                 windTimer = 0;
                 UpdateWind();
             }
-            
+
             //Update all meteo
             foreach (var meteo in meteo)
                 meteo.Update(dt);
@@ -157,7 +157,7 @@ namespace Global {
 
             if (displayDebug) {
                 //Draw world border
-                spriteBatch.Draw(content.textures["worldBounds"], pos, DEBUG_COLOR);
+                spriteBatch.Draw(content.textures["rect,"+width+","+height+",3"], pos, DEBUG_COLOR);
 
                 //Calculate grid position
                 float dumpX = ((x / Bloc.SIZE) - (float)Math.Floor(x / Bloc.SIZE)) * Bloc.SIZE - Bloc.SIZE;
@@ -195,7 +195,7 @@ namespace Global {
             windNoise.Y = (float)Perlin.perlin(rnd.NextDouble(), rnd.NextDouble(), rnd.NextDouble());
 
             //Define wheter the wind increment or decrement
-            switch(rnd.Next(0, 4)) {
+            switch (rnd.Next(0, 4)) {
                 case 1:
                     windNoise.X = -windNoise.X;
                     break;
@@ -217,19 +217,17 @@ namespace Global {
         }
 
         void CreateThings() {
-            /*
             Point[] blocPositions = {
-                new Point(2, 21),
-                new Point(4, 21),
-                new Point(3, 22),
-                new Point(3, 20),
+                new Point(2, 14),
+                new Point(4, 15),
+                new Point(3, 14),
+                new Point(3, 13),
             };
 
             foreach(Point position in blocPositions) {
                 AddBloc(new Blocs.Dirt(this), position);
             }
-            */
-            
+
             Player player = new Player(this, new Vector2(x, height - 56), 44, 56, "player");
 
             player.permanentForce = new Vector2(0, 1000);
@@ -240,6 +238,19 @@ namespace Global {
         #endregion
 
         #region public methods
+        public Editor.SaveData ToSaveData() {
+            //Editor.SaveData save = new Editor.SaveData();
+            //TODO foreach value
+            Editor.SaveData save = new Editor.SaveData {
+                x = this.x, y = this.y, width = this.width, height = this.height,
+                background = this.background, blocs = this.blocs, bordersEvents = this.bordersEvents,
+                color = this.color, meteo = this.meteo, rnd = this.rnd, things = this.things, name = this.name,
+                wind = this.wind, windForce = this.windForce, windLimit = this.windLimit,
+                windRefreshRate = this.windRefreshRate, windScalar = this.windScalar, windTimer = this.windTimer
+            };
+            return save;
+        }
+
         public int GenerateUniqueId() {
             int val = 0;
             bool isUniqueIdFound = false;

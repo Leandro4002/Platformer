@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
@@ -16,8 +16,8 @@ namespace Global {
         Editor editor;
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-        KeyboardState oldKeyboardState;
-        KeyboardState keyboardState;
+        KeyboardState keyboardState, oldKeyboardState;
+        MouseState mouseState, oldMouseState;
         ContentOrganizer content;
         FrameCounter frameCounter;
         World world;
@@ -77,7 +77,7 @@ namespace Global {
             world.debugGrid = Tools.GenerateGridTexture2D(GraphicsDevice, visibleBlocsHorizontaly, visibleBlocsVerticaly, Bloc.SIZE, Color.White);
             world.debugRectangleBackground = Tools.GenerateFilledRectangleTexture2D(GraphicsDevice, 200, 130, Color.White);
 
-            editor = new Editor(world, content);
+            editor = new Editor(world);
 
             base.Initialize();
         }
@@ -88,20 +88,21 @@ namespace Global {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
+            DateTime contentTimer = DateTime.Now;
+
             //Load all content
             foreach (string textureString in texturesToLoad) {
                 content.textures.Add(textureString, Content.Load<Texture2D>(textureString));
             }
-
-            //Add rectangle texture for the world
-            content.textures.Add("worldBounds", Tools.GenerateRectangleTexture2D(GraphicsDevice, (int)world.width, (int)world.height, 2, Color.White));
-
             //Load all fonts
             foreach (string fontString in fontsToLoad) {
                 content.fonts.Add(fontString, Content.Load<SpriteFont>(fontString));
             }
 
+            Console.WriteLine("Loading textures and fonts : "+(DateTime.Now - contentTimer).Milliseconds+" ms");
+
             world.LoadContent(content);
+            editor.LoadContent(content);
 
             //animatedSprite = new AnimatedSprite(Content.Load<Texture2D>("explosion"), 17, 64, 64, 6, 3);
         }
@@ -121,8 +122,9 @@ namespace Global {
             //Get the time between frame
             dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            //Get keyboard state
+            //Get inputs state
             keyboardState = Keyboard.GetState();
+            mouseState = Mouse.GetState();
 
             Controls(dt);
 
@@ -130,12 +132,13 @@ namespace Global {
                 //Increment time
                 time += gameTime.ElapsedGameTime.TotalSeconds;
 
-                editor.Update(Mouse.GetState());
+                editor.Update(keyboardState, mouseState, dt);
 
                 world.Update(dt, keyboardState);
             }
 
             oldKeyboardState = keyboardState;
+            oldMouseState = mouseState;
 
             //Do monogame stuff related to update
             base.Update(gameTime);

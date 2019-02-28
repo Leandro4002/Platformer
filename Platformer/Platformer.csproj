@@ -46,8 +46,11 @@
   <ItemGroup>
     <Compile Include="Blocs\Dirt.cs" />
     <Compile Include="Control\Button.cs" />
+    <Compile Include="Control\Control_Abstract.cs" />
+    <Compile Include="Control\TextBox.cs" />
     <Compile Include="Editor.cs" />
     <Compile Include="Meteo\Confetti_rain.cs" />
+    <Compile Include="Meteo\HeavyWind.cs" />
     <Compile Include="Meteo\Rain.cs" />
     <Compile Include="Other\Background.cs" />
     <Compile Include="Other\Perlin.cs" />

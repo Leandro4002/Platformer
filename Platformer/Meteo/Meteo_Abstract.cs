@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Global.Meteo {
+    [Serializable]
     abstract class Meteo_abstract {
         #region protected attributes
         protected World _world;

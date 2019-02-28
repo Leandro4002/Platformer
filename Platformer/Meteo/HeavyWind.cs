@@ -9,36 +9,36 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Global.Meteo {
     [Serializable]
-    class Rain : Meteo_abstract {
+    class HeavyWind : Meteo_abstract {
         #region drop class
         class Drop {
             public Color color;
             public float x, y, depth;
             public int wth, hgt;
-            public Rain rain;
+            public HeavyWind wind;
 
-            public Drop(Rain rain) {
-                this.rain = rain;
+            public Drop(HeavyWind wind) {
+                this.wind = wind;
                 Reset(true);
             }
 
             public void Reset(bool resetPosition = false) {
                 //Size and depth
-                wth = rain.world.rnd.Next(rain.minWth, rain.maxWth + 1);
-                hgt = rain.world.rnd.Next(rain.minHgt, rain.maxHgt + 1);
-                depth = (float)rain.world.rnd.NextDouble() * rain.maxDepth + rain.minDepth;
+                wth = wind.world.rnd.Next(wind.minWth, wind.maxWth + 1);
+                hgt = wind.world.rnd.Next(wind.minHgt, wind.maxHgt + 1);
+                depth = (float)wind.world.rnd.NextDouble() * wind.maxDepth + wind.minDepth;
 
                 //Position
                 if (resetPosition) {
-                    x = (float)(rain.world.rnd.NextDouble() * (rain.world.wdowDimensions.Width - wth) - rain.world.x);
-                    y = (float)(rain.world.rnd.NextDouble() * (rain.world.wdowDimensions.Height - hgt) - rain.world.y);
+                    x = (float)(wind.world.rnd.NextDouble() * (wind.world.wdowDimensions.Width - wth) - wind.world.x);
+                    y = (float)(wind.world.rnd.NextDouble() * (wind.world.wdowDimensions.Height - hgt) - wind.world.y);
                 }
 
                 //Color depending on depth
-                float scalar = depth * (rain.maxDepth - rain.minDepth);
+                float scalar = depth * (wind.maxDepth - wind.minDepth);
                 float r, g, b;
-                rain.minDepthColor.Deconstruct(out r, out g, out b);
-                rain.maxDepthColor.Deconstruct(out float maxR, out float maxG, out float maxB);
+                wind.minDepthColor.Deconstruct(out r, out g, out b);
+                wind.maxDepthColor.Deconstruct(out float maxR, out float maxG, out float maxB);
                 r += (maxR - r)*scalar;
                 g += (maxG - g)*scalar;
                 b += (maxB - b)*scalar;
@@ -51,16 +51,19 @@ namespace Global.Meteo {
         List<Drop> particules;
         int minWth, maxWth, minHgt, maxHgt;
         int numberOfParticules;
-        float minDepth, maxDepth, fallSpeed;
+        float minDepth, maxDepth;
         Color minDepthColor, maxDepthColor;
+        Vector2 windDefaultSpeed, moveEntityFactor;
         #endregion
 
         #region constructor
-        public Rain(World world, int numberOFParticules, Color minDepthColor, Color maxDepthColor,
-            int minWth = 1, int maxWth = 2, int minHgt = 8, int maxHgt = 10, float minDepth = 0.7f, float maxDepth = 1.2f, float fallSpeed = 500) : base(world) {
+        public HeavyWind(World world, int numberOFParticules, Color minDepthColor, Color maxDepthColor, Vector2 windDefaultSpeed, Vector2 moveEntityFactor,
+            int minWth = 7, int maxWth = 10, int minHgt = 2, int maxHgt = 4, float minDepth = 0.8f, float maxDepth = 1.1f) : base(world) {
             this.minDepthColor = minDepthColor;
             this.maxDepthColor = maxDepthColor;
             this.numberOfParticules = numberOFParticules;
+            this.windDefaultSpeed = windDefaultSpeed;
+            this.moveEntityFactor = moveEntityFactor;
 
             particules = new List<Drop>();
 
@@ -71,7 +74,6 @@ namespace Global.Meteo {
             this.maxHgt = maxHgt;
             this.minDepth = minDepth;
             this.maxDepth = maxDepth;
-            this.fallSpeed = fallSpeed;
 
             Load();
         }
@@ -80,9 +82,9 @@ namespace Global.Meteo {
         #region private methods
         void Load() {
             //Set wind setting
-            world.windLimit = new Vector2(100, 10);
-            world.windScalar = new Vector2(10, 1);
-            world.windRefreshRate = 500;
+            world.windLimit = new Vector2(50, 20);
+            world.windScalar = new Vector2(3, 20);
+            world.windRefreshRate = 200;
 
             //Add every particules
             for (int i = 0; i < numberOfParticules; i++)
@@ -92,17 +94,17 @@ namespace Global.Meteo {
 
         #region public methods
         public override void Update(float dt) {
+            Vector2 dropWindSpeed = (world.wind + windDefaultSpeed) * dt;
             foreach (Drop drop in particules) {
-                //Apply gravity
-                drop.y += (fallSpeed * dt * drop.depth);
 
                 //Apply wind
-                drop.x += (world.wind.X * drop.depth * dt);
-                drop.y += (world.wind.Y * drop.depth * dt);
+                drop.x += dropWindSpeed.X * drop.depth;
+                drop.y += dropWindSpeed.Y * drop.depth;
 
                 //Transfer the drop from one side to the other (vertical)
                 if (drop.y + world.y < -drop.hgt) {
                     drop.y += world.wdowDimensions.Height + drop.hgt;
+                    drop.Reset();
                 } else if (drop.y + world.y > world.wdowDimensions.Height) {
                     drop.y -= world.wdowDimensions.Height + drop.hgt;
                     drop.Reset();
@@ -111,13 +113,21 @@ namespace Global.Meteo {
                 //Transfer the drop from one side to the other (horizontal)
                 if (drop.x + world.x < -drop.wth) {
                     drop.x += world.wdowDimensions.Width + drop.wth;
-                    drop.Reset();
+                    if (world.wind.X < 0) drop.Reset();
                 } else if (drop.x + world.x > world.wdowDimensions.Width) {
                     drop.x -= world.wdowDimensions.Width + drop.wth;
-                    drop.Reset();
+                    if (world.wind.X > 0) drop.Reset();
                 }
             }
 
+            Vector2 entityWindSpeed = (world.wind + windDefaultSpeed) * moveEntityFactor * dt;
+            for (int i = 0; i < world.things.Count; i++) {
+                dynamic iteratedThing = world.things[i];
+
+                if (iteratedThing is Entity) {
+                    iteratedThing.Move(entityWindSpeed);
+                }
+            }
         }
 
         public override void Draw(SpriteBatch spriteBatch) {

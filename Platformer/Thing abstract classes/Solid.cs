@@ -19,8 +19,8 @@ namespace Global {
         public override void Draw(SpriteBatch spriteBatch) {
             spriteBatch.Draw(texture, world.pos + pos, color);
             if (world.displayDebug) {
-                spriteBatch.Draw(world.content.textures["rect50,50,3"], world.pos + pos, DEBUG_COLOR);
-                spriteBatch.DrawString(world.content.fonts["consolas"], x + "\n" + y, world.pos + pos + new Vector2(2, 2), DEBUG_COLOR);
+                spriteBatch.Draw(world.content.textures["rect,50,50,3"], world.pos + pos, DEBUG_COLOR);
+                spriteBatch.DrawString(world.content.fonts["consolas"], x/SIZE + "\n" + y/SIZE, world.pos + pos + new Vector2(2, 2), DEBUG_COLOR);
             }
         }
         #endregion

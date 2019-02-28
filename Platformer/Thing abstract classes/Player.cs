@@ -8,22 +8,27 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 namespace Global {
+    [Serializable]
     class Player : Actor {
-
-        #region private attributes
-        float _moveSpeed = 250, _jumpForce = -700;
-        Vector2 _directionSpeed;
-        #endregion
-
-        #region public accessors
-        public float moveSpeed { get { return _moveSpeed; } set { _moveSpeed = value; } }
-        public float jumpForce { get { return _jumpForce; } set { _jumpForce = value; } }
-        public Vector2 directionSpeed { get { return _directionSpeed; } }
+        #region public attributes
+        float moveSpeed, jumpForce, jumpSlow;
+        float jumpKeyDownTime, airTime;
+        bool jumpKeyDown = false;
+        int jumpLevel;
+        float[] jumpLevels;
+        List<Keys> inputs;
         #endregion
 
         #region constructor
         public Player(World world, Vector2 position, float width, float height, string textureString) : base(world, position, width, height, textureString) {
-            
+            airTime = 0;
+            moveSpeed = 250;
+            jumpForce = 700;
+            jumpKeyDownTime = 0;
+            jumpLevel = 1;
+            jumpLevels = new float[] { 100, 200, 250, 300 };
+            jumpSlow = 500;
+            inputs = new List<Keys>();
         }
         #endregion
 
@@ -61,20 +66,31 @@ namespace Global {
         public override void Update(float dt) {
             base.Update(dt);
 
-            //Saut
-            if (world.oldKeyboardState.IsKeyUp(Keys.W) && world.keyboardState.IsKeyDown(Keys.W)
-                /*&& _isOnGround*/) {
-                ApplyForce(new Vector2(0, _jumpForce));
-                _isOnGround = false;
+            PressedState(Keys.S);
+            PressedState(Keys.A);
+            PressedState(Keys.D);
+
+            //Direction du joueur
+            if (inputs.Count() > 0) {
+                switch (inputs.Last()) {
+                    case Keys.S:
+                        //Nada
+                        break;
+                    case Keys.A:
+                        MoveX(-moveSpeed * dt);
+                        break;
+                    case Keys.D:
+                        MoveX(moveSpeed * dt);
+                        break;
+                }
             }
 
-            //Gauche
-            if (world.keyboardState.IsKeyDown(Keys.A))
-                MoveX(-moveSpeed * dt);
-
-            //Droite
-            if (world.keyboardState.IsKeyDown(Keys.D))
-                MoveX(moveSpeed * dt);
+            //Saut
+            if (world.oldKeyboardState.IsKeyUp(Keys.W) && world.keyboardState.IsKeyDown(Keys.W)
+                && _isOnGround) {
+                ApplyForce(new Vector2(0, -jumpForce));
+                _isOnGround = false;
+            }
         }
         #endregion
 
@@ -88,10 +104,24 @@ namespace Global {
         }
         #endregion
 
+        #region private methods
+        bool PressedState(Keys key) {
+            if (world.oldKeyboardState.IsKeyUp(key) && world.keyboardState.IsKeyDown(key)
+                && !inputs.Contains(key)) {
+                inputs.Add(key);
+                return true;
+            } else if (world.oldKeyboardState.IsKeyDown(key) && world.keyboardState.IsKeyUp(key)
+                && inputs.Contains(key)) {
+                inputs.RemoveAt(inputs.FindIndex(item => item == key));
+            }
+            return false;
+        }
+        #endregion
+
         #region public methods
         public void TouchGround() {
             _isOnGround = true;
-            Console.WriteLine("Le joueur touche le sol");
+            //Console.WriteLine("Le joueur touche le sol");
         }
         public override bool MoveX(float moveSpeed) {
             bool result = base.MoveX(moveSpeed);

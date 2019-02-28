@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 namespace Global.Blocs {
+    [Serializable]
     class Dirt : Solid {
         #region constructor
         public Dirt(World world) : base(world) {

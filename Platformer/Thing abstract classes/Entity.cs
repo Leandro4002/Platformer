@@ -107,6 +107,11 @@ namespace Global {
             _force += appliedForce;
         }
 
+        public void Move(Vector2 moveSpeed) {
+            MoveX(moveSpeed.X);
+            MoveY(moveSpeed.Y);
+        }
+
         public abstract bool MoveX(float moveSpeed);
         public abstract bool MoveY(float moveSpeed);
         #endregion
