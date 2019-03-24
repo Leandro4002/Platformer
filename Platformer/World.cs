@@ -54,6 +54,7 @@ namespace Global {
         public List<Meteo.Meteo_abstract> meteo { get { return _meteo; } private set { _meteo = value; } }
 
         public Vector2 pos => new Vector2(x, y);
+        public Vector2 size => new Vector2(width, height);
         #endregion
 
         #region constructor
@@ -156,9 +157,6 @@ namespace Global {
                 meteo.Draw(spriteBatch);
 
             if (displayDebug) {
-                //Draw world border
-                spriteBatch.Draw(content.textures["rect,"+width+","+height+",3"], pos, DEBUG_COLOR);
-
                 //Calculate grid position
                 float dumpX = ((x / Bloc.SIZE) - (float)Math.Floor(x / Bloc.SIZE)) * Bloc.SIZE - Bloc.SIZE;
                 float dumpY = ((y / Bloc.SIZE) - (float)Math.Floor(y / Bloc.SIZE)) * Bloc.SIZE - Bloc.SIZE;
@@ -218,10 +216,19 @@ namespace Global {
 
         void CreateThings() {
             Point[] blocPositions = {
-                new Point(2, 14),
-                new Point(4, 15),
-                new Point(3, 14),
-                new Point(3, 13),
+                new Point(2, 21),
+                new Point(4, 22),
+                new Point(3, 21),
+                new Point(3, 20),
+                new Point(9, 23),
+                new Point(9, 24),
+                new Point(13, 22),
+                new Point(13, 23),
+                new Point(13, 24),
+                new Point(17, 21),
+                new Point(17, 22),
+                new Point(17, 23),
+                new Point(17, 24),
             };
 
             foreach(Point position in blocPositions) {
@@ -230,8 +237,8 @@ namespace Global {
 
             Player player = new Player(this, new Vector2(x, height - 56), 44, 56, "player");
 
-            player.permanentForce = new Vector2(0, 1000);
-            player.limitForce = new Vector2(1000, 1000);
+            player.permanentForce = new Vector2(0, 4000);
+            player.limitForce = new Vector2(1000, 10000);
 
             SetPlayer(player);
         }

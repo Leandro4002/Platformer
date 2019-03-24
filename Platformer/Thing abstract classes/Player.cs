@@ -13,7 +13,7 @@ namespace Global {
         #region public attributes
         float moveSpeed, jumpForce, jumpSlow;
         float jumpKeyDownTime, airTime;
-        bool jumpKeyDown = false;
+        bool canJumpHigher;
         int jumpLevel;
         float[] jumpLevels;
         List<Keys> inputs;
@@ -22,12 +22,12 @@ namespace Global {
         #region constructor
         public Player(World world, Vector2 position, float width, float height, string textureString) : base(world, position, width, height, textureString) {
             airTime = 0;
-            moveSpeed = 250;
-            jumpForce = 700;
+            moveSpeed = 300;
+            jumpForce = 650;
             jumpKeyDownTime = 0;
             jumpLevel = 1;
-            jumpLevels = new float[] { 100, 200, 250, 300 };
-            jumpSlow = 500;
+            jumpLevels = new float[] { 119, 120, 250, 400 };//Un peu dégeulasse, à corriger
+            jumpSlow = 580;
             inputs = new List<Keys>();
         }
         #endregion
@@ -91,6 +91,38 @@ namespace Global {
                 ApplyForce(new Vector2(0, -jumpForce));
                 _isOnGround = false;
             }
+
+            /*
+            //Compte le temps de pression du bouton de saut
+            if (player.jumpKeyDown) {
+                player.jumpKeyDownTime = player.jumpKeyDownTime + 1000 * dt;
+            }*/
+
+            if (canJumpHigher) {
+                ApplyForce(-permanentForce * dt);
+                ApplyForce(new Vector2(0, jumpSlow) * dt);
+            }
+
+            //Jump nuancer
+            if (airTime < jumpLevels[jumpLevel]) {
+                canJumpHigher = true;
+            } else {
+                if (world.keyboardState.IsKeyDown(Keys.W) && canJumpHigher && airTime < jumpLevels.Last()) {
+                    if (jumpLevel <= jumpLevels.Length - 1) {
+                        jumpLevel++;
+                    }
+                } else {
+                    canJumpHigher = false;
+                }
+            }
+
+            if (!_isOnGround) {
+                airTime = airTime + 1000 * dt;
+                //Console.WriteLine(airTime);
+            } else {
+                airTime = 0;
+                jumpLevel = 1;
+            }
         }
         #endregion
 
@@ -121,7 +153,8 @@ namespace Global {
         #region public methods
         public void TouchGround() {
             _isOnGround = true;
-            //Console.WriteLine("Le joueur touche le sol");
+            //if (airTime > 200) animation d'aterrissage
+            Console.WriteLine("Le joueur touche le sol");
         }
         public override bool MoveX(float moveSpeed) {
             bool result = base.MoveX(moveSpeed);
@@ -131,6 +164,12 @@ namespace Global {
         public override bool MoveY(float moveSpeed) {
             bool result = base.MoveY(moveSpeed);
             world.SetCameraPosition(centerX, centerY);
+
+            //temp
+            if (moveSpeed > 0) {
+                canJumpHigher = false;
+            }
+
             return result;
         }
         #endregion

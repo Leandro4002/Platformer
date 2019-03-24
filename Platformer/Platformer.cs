@@ -63,13 +63,19 @@ namespace Global {
             //Window size
             graphics.PreferredBackBufferWidth = 1200;
             graphics.PreferredBackBufferHeight = 800;
+            //graphics.PreferredBackBufferWidth = 800;
+            //graphics.PreferredBackBufferHeight = 600;
             graphics.ApplyChanges();
+
+            //FPS
+            IsFixedTimeStep = true;
+            TargetElapsedTime = TimeSpan.FromSeconds(1d / 60d);
 
             //FPS counter
             frameCounter = new FrameCounter();
 
             //Create world
-            world = new World(Window.ClientBounds, 40, 18, rnd);
+            world = new World(Window.ClientBounds, 150, 25, rnd);
 
             int visibleBlocsHorizontaly = world.wdowDimensions.Width / Bloc.SIZE + 1;
             int visibleBlocsVerticaly = world.wdowDimensions.Height / Bloc.SIZE + 1;

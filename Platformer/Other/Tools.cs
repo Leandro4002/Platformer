@@ -175,6 +175,8 @@ namespace Global {
             }
 
             //Put the data in the texture
+            //Si il y a l'exception "invalid argument" :
+            //https://stackoverflow.com/questions/32002182/bitmap-creation-problems-invalid-parameter-c-sharp
             texture.SetData(data);
 
             return texture;
